@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Event;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -97,7 +98,29 @@ class EventsController extends BaseController
      */
 
     public function getEventsWithWorkshops() {
-        throw new \Exception('implement in coding task 1');
+        $eventlist=new Event;
+		$eventlist=Event::get();
+		//$eventlist=Event::leftJoin('workshops', 'events.id', '=', 'workshops.event_id')->get();
+		//echo "<pre>";
+		//echo json_encode($eventlist);
+		//echo "</pre>";
+
+	
+		$data = $eventlist;
+		$workshop = array();
+		foreach($eventlist as $eventdata){
+			$workshops = DB::table('workshops')
+				->where('event_id', '=', $eventdata->id)
+				->get();
+			$workshop[] = $eventdata;
+			$workshop[]['workshops'] = $workshops;
+			//$workshop['id'] = $eventdata->id;
+			//$workshop['name'] = $eventdata->name;
+			//$workshop['workshop'] = $workshops;
+		}
+		//echo "<pre>";print_r($workshop); echo "</pre>";
+		echo json_encode($workshop);
+		//throw new \Exception('implement in coding task 1');
     }
 
 
