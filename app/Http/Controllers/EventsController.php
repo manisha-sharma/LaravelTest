@@ -100,11 +100,6 @@ class EventsController extends BaseController
     public function getEventsWithWorkshops() {
         $eventlist=new Event;
 		$eventlist=Event::get();
-		//$eventlist=Event::leftJoin('workshops', 'events.id', '=', 'workshops.event_id')->get();
-		//echo "<pre>";
-		//echo json_encode($eventlist);
-		//echo "</pre>";
-
 	
 		$data = $eventlist;
 		$workshop = array();
@@ -199,6 +194,22 @@ class EventsController extends BaseController
      */
 
     public function getFutureEventsWithWorkshops() {
-        throw new \Exception('implement in coding task 2');
+		$eventlist=new Event;
+		$eventlist=Event::get();
+		$data = $eventlist;
+		$workshop = array();
+		foreach($eventlist as $eventdata){
+			$workshops = DB::table('workshops')
+				->where('event_id', '=', $eventdata->id)
+				->where('workshops.start', '>=', NOW())
+				->get();
+			if(count($workshops) > 0){
+				$workshop[] = $eventdata;
+				$workshop[]['workshops'] = $workshops;	
+			}
+		}
+		//echo "<pre>";print_r($workshop); echo "</pre>";
+		echo json_encode($workshop);
+        //throw new \Exception('implement in coding task 2');
     }
 }
