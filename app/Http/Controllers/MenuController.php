@@ -95,6 +95,40 @@ class MenuController extends BaseController
      */
 
     public function getMenuItems() {
-        throw new \Exception('implement in coding task 3');
+		$menulist=new MenuItem;
+		$menulist=MenuItem::get();
+		$data = array();
+		foreach($menulist as $items)
+		{
+			if($items->parent_id !=""){
+				//$data[] = $items;
+				//$data[]['childata']=MenuItem::where('parent_id','=',$items->parent_id)->get();
+				$childata[$items->parent_id]=MenuItem::where('parent_id','=',$items->parent_id)->get();
+			}else{
+				$childata[] = "";
+			}
+			//echo $items->parent_id."<br>";
+			//echo "<pre>"; print_r($items); echo "<pre>";
+		}
+		foreach($menulist as $items){
+			$data[] = $items;
+			//echo $items->parent_id."<br>";
+			if($items->parent_id == ""){
+				$data[]['childata'] = "";
+			}else{
+				foreach($childata as $key => $value)
+				{
+					//echo $items->parent_id." -- ".$key."<br>";
+					//echo json_encode($value);
+					if($items->parent_id == $key){
+						$data[]['childata'] = $value;
+					}
+				}	
+			}
+		}
+		
+		//echo "<pre>";print_r($data); echo "</pre>";
+		echo json_encode($data);
+        //throw new \Exception('implement in coding task 3');
     }
 }
